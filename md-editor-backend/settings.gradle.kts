@@ -1,1 +1,1 @@
-rootProject.name = "md-editor"
+rootProject.name = "md-editor-backend"

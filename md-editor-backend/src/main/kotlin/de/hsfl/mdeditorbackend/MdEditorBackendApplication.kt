@@ -1,11 +1,11 @@
-package de.hslf.md_editor
+package de.hsfl.mdeditorbackend
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class MdEditorApplication
+class MdEditorBackendApplication
 
 fun main(args: Array<String>) {
-	runApplication<MdEditorApplication>(*args)
+	runApplication<MdEditorBackendApplication>(*args)
 }
