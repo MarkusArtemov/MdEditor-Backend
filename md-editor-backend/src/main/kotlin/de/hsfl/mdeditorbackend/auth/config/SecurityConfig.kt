@@ -65,10 +65,11 @@ class SecurityConfig(
             }
 
             authorizeHttpRequests {
-                authorize("/auth/**",       permitAll)
+                authorize("/auth/**",        permitAll)
                 authorize("/swagger-ui/**",  permitAll)
                 authorize("/v3/api-docs/**", permitAll)
-                authorize(anyRequest,        authenticated)
+                authorize("/admin/**",       hasRole("ADMIN"))
+                authorize(anyRequest, authenticated)
             }
 
             sessionManagement {
