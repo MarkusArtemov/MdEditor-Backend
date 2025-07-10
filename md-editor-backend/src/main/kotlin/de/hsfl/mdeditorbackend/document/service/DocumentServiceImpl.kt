@@ -85,16 +85,50 @@ class DocumentServiceImpl(
   }
 
   @Transactional(readOnly = true)
-  override fun listVersions(owner: String, docId: Long): List<DocumentVersionSummary> =
-    throw UnsupportedOperationException()
+  override fun listVersions(owner: String, docId: Long): List<DocumentVersionSummary> {
+    val doc = documentRepository.findById(docId)
+      .orElseThrow { NoSuchElementException("Document $docId not found") }
+    assertOwner(doc.owner, owner)
+    return documentVersionRepository
+      .findAllByDocumentIdOrderByVersionNumberDesc(docId)
+      .map { documentMapper.toSummary(it) }
+  }
 
   @Transactional(readOnly = true)
-  override fun getVersion(owner: String, docId: Long, versionId: Long): DocumentResponse =
-    throw UnsupportedOperationException()
+  override fun getVersion(owner: String, docId: Long, versionId: Long): DocumentResponse {
+    val version = documentVersionRepository.findById(versionId)
+      .orElseThrow { NoSuchElementException("Version $versionId not found") }
+    assertOwner(version.document.owner, owner)
+    return DocumentResponse(
+      id = version.document.id,
+      title = version.document.title,
+      content = version.content,
+      versionNumber = version.versionNumber,
+      updatedAt = version.createdAt
+    )
+  }
 
   @Transactional
   override fun restoreVersion(owner: String, docId: Long, versionId: Long) {
-    throw UnsupportedOperationException()
+    val doc = documentRepository.findById(docId)
+      .orElseThrow { NoSuchElementException("Document $docId not found") }
+    val version = documentVersionRepository.findById(versionId)
+      .orElseThrow { NoSuchElementException("Version $versionId not found") }
+    assertOwner(doc.owner, owner)
+
+    val newVersionNo = (doc.currentVersion?.versionNumber ?: 0) + 1
+    val restoredVersion = DocumentVersion(
+      document = doc,
+      versionNumber = newVersionNo,
+      content = version.content,
+      author = owner,
+      createdAt = Instant.now()
+    )
+    documentVersionRepository.save(restoredVersion)
+
+    doc.currentVersion = restoredVersion
+    doc.updatedAt = restoredVersion.createdAt
+    documentRepository.save(doc)
   }
 
   private fun assertOwner(actualOwner: String, currentUser: String) {
