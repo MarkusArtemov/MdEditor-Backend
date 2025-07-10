@@ -2,6 +2,10 @@ package de.hsfl.mdeditorbackend.auth.controller
 
 
 import de.hsfl.mdeditorbackend.auth.config.JwtTokenProvider
+import de.hsfl.mdeditorbackend.auth.model.dto.AuthResponse
+import de.hsfl.mdeditorbackend.auth.model.dto.LoginRequest
+import de.hsfl.mdeditorbackend.user.model.dto.UserCreateDto
+import de.hsfl.mdeditorbackend.user.model.entity.Role
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -10,10 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import de.hsfl.mdeditorbackend.auth.model.entity.User
-import de.hsfl.mdeditorbackend.auth.model.entity.Role
-import de.hsfl.mdeditorbackend.auth.repository.UserRepository
-import org.springframework.security.crypto.password.PasswordEncoder
+import de.hsfl.mdeditorbackend.user.service.UserServiceImpl
 
 
 @RestController
@@ -21,12 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class AuthController(
     private val authManager: AuthenticationManager,
     private val jwtProvider: JwtTokenProvider,
-    private val passwordEncoder: PasswordEncoder,
-    private val userRepository: UserRepository
+    private val userService: UserServiceImpl
 ) {
-
-    data class LoginRequest(val username: String, val password: String)
-    data class AuthResponse(val token: String)
 
     @PostMapping("/login")
     fun login(@RequestBody req: LoginRequest): ResponseEntity<AuthResponse> {
@@ -40,16 +37,8 @@ class AuthController(
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody req: LoginRequest): ResponseEntity<Void> {
-        if (userRepository.findByUsername(req.username) != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build()
-        }
-        val user = User(
-            username = req.username,
-            password = passwordEncoder.encode(req.password),
-            role = Role.USER
-        )
-        userRepository.save(user)
+    fun register(@RequestBody dto: LoginRequest): ResponseEntity<Void> {
+        userService.create(UserCreateDto(dto.username, dto.password, Role.USER))
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 }

@@ -1,4 +1,4 @@
-package de.hsfl.mdeditorbackend.auth.model.entity
+package de.hsfl.mdeditorbackend.user.model.entity
 
 import jakarta.persistence.*
 
@@ -10,14 +10,14 @@ data class User(
     val id: Long = 0,
 
     @Column(unique = true, nullable = false)
-    val username: String,
+    var username: String,
 
     @Column(nullable = false)
-    val password: String,
+    var password: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val role: Role = Role.USER
+    var role: Role = Role.USER
 )
 
 enum class Role {
