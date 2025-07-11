@@ -4,8 +4,8 @@ package de.hsfl.mdeditorbackend.auth.controller
 import de.hsfl.mdeditorbackend.auth.config.JwtTokenProvider
 import de.hsfl.mdeditorbackend.auth.model.dto.AuthResponse
 import de.hsfl.mdeditorbackend.auth.model.dto.LoginRequest
-import de.hsfl.mdeditorbackend.user.model.dto.UserCreateDto
-import de.hsfl.mdeditorbackend.user.model.entity.Role
+import de.hsfl.mdeditorbackend.auth.model.dto.UserCreateDto
+import de.hsfl.mdeditorbackend.auth.model.entity.Role
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import de.hsfl.mdeditorbackend.user.service.UserServiceImpl
+import de.hsfl.mdeditorbackend.auth.service.UserServiceImpl
 
 
 @RestController

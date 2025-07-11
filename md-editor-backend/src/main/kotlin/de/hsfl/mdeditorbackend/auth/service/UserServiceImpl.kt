@@ -1,9 +1,9 @@
-package de.hsfl.mdeditorbackend.user.service
+package de.hsfl.mdeditorbackend.auth.service
 
-import de.hsfl.mdeditorbackend.user.model.dto.UserCreateDto
-import de.hsfl.mdeditorbackend.user.model.entity.User
-import de.hsfl.mdeditorbackend.user.model.entity.Role
-import de.hsfl.mdeditorbackend.user.repository.UserRepository
+import de.hsfl.mdeditorbackend.auth.model.dto.UserCreateDto
+import de.hsfl.mdeditorbackend.auth.model.entity.User
+import de.hsfl.mdeditorbackend.auth.model.entity.Role
+import de.hsfl.mdeditorbackend.auth.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
-) :UserService {
+) : UserService {
     override fun create(dto: UserCreateDto): User {
         if (userRepository.existsByUsername(dto.username)) {
             throw IllegalArgumentException("Username $dto.username already taken")

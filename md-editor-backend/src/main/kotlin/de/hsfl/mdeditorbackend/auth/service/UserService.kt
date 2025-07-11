@@ -1,8 +1,8 @@
-package de.hsfl.mdeditorbackend.user.service
+package de.hsfl.mdeditorbackend.auth.service
 
-import de.hsfl.mdeditorbackend.user.model.dto.UserCreateDto
-import de.hsfl.mdeditorbackend.user.model.entity.Role
-import de.hsfl.mdeditorbackend.user.model.entity.User
+import de.hsfl.mdeditorbackend.auth.model.dto.UserCreateDto
+import de.hsfl.mdeditorbackend.auth.model.entity.Role
+import de.hsfl.mdeditorbackend.auth.model.entity.User
 
 interface UserService {
     fun create(dto: UserCreateDto): User

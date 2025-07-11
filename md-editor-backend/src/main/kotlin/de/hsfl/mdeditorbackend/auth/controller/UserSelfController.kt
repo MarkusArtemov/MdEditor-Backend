@@ -1,11 +1,12 @@
-package de.hsfl.mdeditorbackend.user.controller
+package de.hsfl.mdeditorbackend.auth.controller
 
-import de.hsfl.mdeditorbackend.user.model.dto.ChangePasswordRequest
-import de.hsfl.mdeditorbackend.user.model.dto.ChangeUsernameRequest
-import de.hsfl.mdeditorbackend.user.service.UserService
+import de.hsfl.mdeditorbackend.common.security.UserPrincipal
+import de.hsfl.mdeditorbackend.auth.model.dto.ChangePasswordRequest
+import de.hsfl.mdeditorbackend.auth.model.dto.ChangeUsernameRequest
+import de.hsfl.mdeditorbackend.auth.service.UserService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -17,9 +18,9 @@ class UserSelfController(
     @PatchMapping("/username")
     fun changeUsername(
         @Valid @RequestBody req: ChangeUsernameRequest,
-        authentication: Authentication
+        @AuthenticationPrincipal user: UserPrincipal
     ): ResponseEntity<Void> {
-        val me = authentication.name
+        val me = user.username
         userService.updateOwnUsername(me, req.newUsername)
         return ResponseEntity.noContent().build()
     }
@@ -27,18 +28,18 @@ class UserSelfController(
     @PatchMapping("/password")
     fun changePassword(
         @Valid @RequestBody req: ChangePasswordRequest,
-        authentication: Authentication
+        @AuthenticationPrincipal user: UserPrincipal
     ): ResponseEntity<Void> {
-        val me = authentication.name
+        val me = user.username
         userService.updateOwnPassword(me, req.oldPassword, req.newPassword)
         return ResponseEntity.noContent().build()
     }
 
     @DeleteMapping
     fun deleteAccount(
-        authentication: Authentication
+        @AuthenticationPrincipal user: UserPrincipal
     ): ResponseEntity<Void> {
-        val me = authentication.name
+        val me = user.username
         userService.deleteOwnAccount(me)
         return ResponseEntity.noContent().build()
     }

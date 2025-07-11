@@ -1,6 +1,6 @@
-package de.hsfl.mdeditorbackend.user.model.dto
+package de.hsfl.mdeditorbackend.auth.model.dto
 
-import de.hsfl.mdeditorbackend.user.model.entity.Role
+import de.hsfl.mdeditorbackend.auth.model.entity.Role
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size

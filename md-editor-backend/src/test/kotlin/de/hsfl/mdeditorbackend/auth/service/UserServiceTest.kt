@@ -1,9 +1,9 @@
-package de.hsfl.mdeditorbackend.user.service
+package de.hsfl.mdeditorbackend.auth.service
 
-import de.hsfl.mdeditorbackend.user.model.dto.UserCreateDto
-import de.hsfl.mdeditorbackend.user.model.entity.Role
-import de.hsfl.mdeditorbackend.user.model.entity.User
-import de.hsfl.mdeditorbackend.user.repository.UserRepository
+import de.hsfl.mdeditorbackend.auth.model.dto.UserCreateDto
+import de.hsfl.mdeditorbackend.auth.model.entity.Role
+import de.hsfl.mdeditorbackend.auth.model.entity.User
+import de.hsfl.mdeditorbackend.auth.repository.UserRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.argThat
 import org.mockito.Mockito.*
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*

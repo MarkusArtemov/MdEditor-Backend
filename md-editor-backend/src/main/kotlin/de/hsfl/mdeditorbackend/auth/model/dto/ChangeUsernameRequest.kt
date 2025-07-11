@@ -1,4 +1,4 @@
-package de.hsfl.mdeditorbackend.user.model.dto
+package de.hsfl.mdeditorbackend.auth.model.dto
 
 import jakarta.validation.constraints.NotBlank
 
