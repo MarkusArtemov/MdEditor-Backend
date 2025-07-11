@@ -102,7 +102,7 @@ class DocumentServiceImpl(
 
   @Transactional(readOnly = true)
   override fun getVersion(ownerId: Long, docId: Long, versionId: Long): DocumentResponse {
-    val version = documentVersionRepository.findById(versionId)
+    val version = documentVersionRepository.findByDocumentIdAndVersionNumber(docId, versionId)
       .orElseThrow { VersionNotFoundException(versionId) }
     assertOwner(version.document.ownerId, ownerId)
     return DocumentResponse(
@@ -115,15 +115,15 @@ class DocumentServiceImpl(
   }
 
   override fun restoreVersion(ownerId: Long, docId: Long, versionId: Long) {
-    val doc = documentRepository.findById(docId)
-      .orElseThrow { DocumentNotFoundException(docId) }
-    val version = documentVersionRepository.findById(versionId)
+    val version = documentVersionRepository.findByDocumentIdAndVersionNumber(docId,versionId)
       .orElseThrow { VersionNotFoundException(versionId) }
-    assertOwner(doc.ownerId, ownerId)
+    assertOwner(version.document.ownerId, ownerId)
 
-    val newVersionNo = (doc.currentVersion?.versionNumber ?: 0) + 1
+    val document = version.document
+
+    val newVersionNo = (document.currentVersion?.versionNumber ?: 0) + 1
     val restoredVersion = DocumentVersion(
-      document = doc,
+      document = document,
       versionNumber = newVersionNo,
       content = version.content,
       authorId = ownerId,
@@ -131,9 +131,9 @@ class DocumentServiceImpl(
     )
     documentVersionRepository.save(restoredVersion)
 
-    doc.currentVersion = restoredVersion
-    doc.updatedAt = restoredVersion.createdAt
-    documentRepository.save(doc)
+    document.currentVersion = restoredVersion
+    document.updatedAt = restoredVersion.createdAt
+    documentRepository.save(document)
   }
 
   private fun assertOwner(actualOwnerId: Long, currentUserId: Long) {
