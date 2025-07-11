@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
+@Transactional
 class DocumentServiceImpl(
   private val documentRepository: DocumentRepository,
   private val documentVersionRepository: DocumentVersionRepository,
   private val documentMapper: DocumentMapper
 ) : DocumentService {
 
-  @Transactional
   override fun create(ownerId: Long, req: DocumentCreateRequest): DocumentResponse {
     if (req.content.isBlank()) throw EmptyContentException()
     val document = documentMapper.toEntity(req, ownerId)
@@ -51,7 +51,6 @@ class DocumentServiceImpl(
     return documentMapper.toResponse(doc)
   }
 
-  @Transactional
   override fun update(ownerId: Long, id: Long, req: DocumentUpdateRequest): DocumentResponse {
     val doc = documentRepository.findById(id)
       .orElseThrow { DocumentNotFoundException(id) }
@@ -81,7 +80,6 @@ class DocumentServiceImpl(
     return documentMapper.toResponse(doc)
   }
 
-  @Transactional
   override fun delete(ownerId: Long, id: Long) {
     val doc = documentRepository.findById(id)
       .orElseThrow { DocumentNotFoundException(id) }
@@ -116,7 +114,6 @@ class DocumentServiceImpl(
     )
   }
 
-  @Transactional
   override fun restoreVersion(ownerId: Long, docId: Long, versionId: Long) {
     val doc = documentRepository.findById(docId)
       .orElseThrow { DocumentNotFoundException(docId) }
