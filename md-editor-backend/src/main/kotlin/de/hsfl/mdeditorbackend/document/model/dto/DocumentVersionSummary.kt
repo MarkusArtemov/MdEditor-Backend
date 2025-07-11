@@ -5,6 +5,6 @@ import java.time.Instant
 data class DocumentVersionSummary(
   val id: Long,
   val versionNumber: Int,
-  val author: String,
+  val authorId: Long,
   val createdAt: Instant
 )

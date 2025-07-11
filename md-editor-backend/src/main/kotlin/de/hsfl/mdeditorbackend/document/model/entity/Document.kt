@@ -12,8 +12,8 @@ data class Document(
   @Column(nullable = false)
   var title: String,
 
-  @Column(nullable = false)
-  val owner: String,
+  @Column(name = "owner_id", nullable = false)
+  val ownerId: Long,
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "current_version_id")

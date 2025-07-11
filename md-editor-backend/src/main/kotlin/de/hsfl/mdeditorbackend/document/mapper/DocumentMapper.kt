@@ -19,7 +19,7 @@ interface DocumentMapper {
     Mapping(target = "currentVersion",ignore = true),
     Mapping(target = "createdAt", expression = "java(Instant.now())"),
     Mapping(target = "updatedAt", expression = "java(Instant.now())"),
-    Mapping(source = "owner", target = "owner")
+    Mapping(target = "ownerId", expression = "java(ownerId)")
   )
-  fun toEntity(request: DocumentCreateRequest, @Context owner: String): Document
+  fun toEntity(request: DocumentCreateRequest, @Context ownerId: Long): Document
 }

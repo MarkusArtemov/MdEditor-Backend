@@ -1,5 +1,6 @@
 package de.hsfl.mdeditorbackend.document.controller
 
+import de.hsfl.mdeditorbackend.common.security.userId
 import de.hsfl.mdeditorbackend.document.model.dto.*
 import de.hsfl.mdeditorbackend.document.service.DocumentService
 import jakarta.validation.Valid
@@ -20,18 +21,20 @@ class DocumentController(
     auth: Authentication
   ): ResponseEntity<DocumentResponse> =
     ResponseEntity.status(HttpStatus.CREATED)
-      .body(documentService.create(auth.name, body))
+      .body(documentService.create(auth.userId(), body))
+
 
   @GetMapping
   fun listOwn(auth: Authentication): List<DocumentResponse> =
-    documentService.listOwn(auth.name)
+    documentService.listOwn(auth.userId())
 
   @GetMapping("/{id}")
   fun get(
     @PathVariable id: Long,
     auth: Authentication
   ): DocumentResponse =
-    documentService.get(auth.name, id)
+    documentService.get(auth.userId(), id)
+
 
   @PutMapping("/{id}")
   fun update(
@@ -39,14 +42,14 @@ class DocumentController(
     @Valid @RequestBody body: DocumentUpdateRequest,
     auth: Authentication
   ): DocumentResponse =
-    documentService.update(auth.name, id, body)
+    documentService.update(auth.userId(), id, body)
 
   @DeleteMapping("/{id}")
   fun delete(
     @PathVariable id: Long,
     auth: Authentication
   ): ResponseEntity<Void> {
-    documentService.delete(auth.name, id)
+    documentService.delete(auth.userId(), id)
     return ResponseEntity.noContent().build()
   }
 
@@ -55,7 +58,7 @@ class DocumentController(
     @PathVariable id: Long,
     auth: Authentication
   ): List<DocumentVersionSummary> =
-    documentService.listVersions(auth.name, id)
+    documentService.listVersions(auth.userId(), id)
 
   @GetMapping("/{id}/versions/{vid}")
   fun getVersion(
@@ -63,7 +66,7 @@ class DocumentController(
     @PathVariable vid: Long,
     auth: Authentication
   ): DocumentResponse =
-    documentService.getVersion(auth.name, id, vid)
+    documentService.getVersion(auth.userId(), id, vid)
 
   @PostMapping("/{id}/restore/{vid}")
   fun restore(
@@ -71,7 +74,7 @@ class DocumentController(
     @PathVariable vid: Long,
     auth: Authentication
   ): ResponseEntity<Void> {
-    documentService.restoreVersion(auth.name, id, vid)
+    documentService.restoreVersion(auth.userId(), id, vid)
     return ResponseEntity.noContent().build()
   }
 }

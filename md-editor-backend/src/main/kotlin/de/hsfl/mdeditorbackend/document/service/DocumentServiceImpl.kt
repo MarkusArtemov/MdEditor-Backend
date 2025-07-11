@@ -1,5 +1,6 @@
 package de.hsfl.mdeditorbackend.document.service
 
+import de.hsfl.mdeditorbackend.document.exception.*
 import de.hsfl.mdeditorbackend.document.mapper.DocumentMapper
 import de.hsfl.mdeditorbackend.document.model.dto.*
 import de.hsfl.mdeditorbackend.document.model.entity.DocumentVersion
@@ -17,15 +18,16 @@ class DocumentServiceImpl(
 ) : DocumentService {
 
   @Transactional
-  override fun create(owner: String, req: DocumentCreateRequest): DocumentResponse {
-    val document = documentMapper.toEntity(req, owner)
+  override fun create(ownerId: Long, req: DocumentCreateRequest): DocumentResponse {
+    if (req.content.isBlank()) throw EmptyContentException()
+    val document = documentMapper.toEntity(req, ownerId)
     documentRepository.save(document)
 
     val version = DocumentVersion(
       document = document,
       versionNumber = 1,
       content = req.content,
-      author = owner,
+      authorId = ownerId,
       createdAt = Instant.now()
     )
     documentVersionRepository.save(version)
@@ -38,46 +40,52 @@ class DocumentServiceImpl(
   }
 
   @Transactional(readOnly = true)
-  override fun listOwn(owner: String): List<DocumentResponse> =
-    documentRepository.findAllByOwner(owner).map { documentMapper.toResponse(it) }
+  override fun listOwn(ownerId: Long): List<DocumentResponse> =
+    documentRepository.findAllByOwnerId(ownerId).map(documentMapper::toResponse)
 
   @Transactional(readOnly = true)
-  override fun get(owner: String, id: Long): DocumentResponse {
+  override fun get(ownerId: Long, id: Long): DocumentResponse {
     val doc = documentRepository.findById(id)
-      .orElseThrow { NoSuchElementException("Document $id not found") }
-    assertOwner(doc.owner, owner)
+      .orElseThrow { DocumentNotFoundException(id) }
+    assertOwner(doc.ownerId, ownerId)
     return documentMapper.toResponse(doc)
   }
 
   @Transactional
-  override fun update(owner: String, id: Long, req: DocumentUpdateRequest): DocumentResponse {
+  override fun update(ownerId: Long, id: Long, req: DocumentUpdateRequest): DocumentResponse {
     val doc = documentRepository.findById(id)
-      .orElseThrow { NoSuchElementException("Document $id not found") }
-    assertOwner(doc.owner, owner)
+      .orElseThrow { DocumentNotFoundException(id) }
+    assertOwner(doc.ownerId, ownerId)
 
-    req.title?.let { doc.title = it }
+    req.title?.let {
+      if (it.isBlank() || it.length > 255) throw InvalidTitleException()
+      doc.title = it
+    }
+
     req.content?.let {
+      if (it.isBlank()) throw EmptyContentException()
       val newVersionNo = (doc.currentVersion?.versionNumber ?: 0) + 1
       val version = DocumentVersion(
         document = doc,
         versionNumber = newVersionNo,
         content = it,
-        author = owner,
+        authorId = ownerId,
         createdAt = Instant.now()
       )
       documentVersionRepository.save(version)
       doc.currentVersion = version
       doc.updatedAt = version.createdAt
     }
+
     documentRepository.save(doc)
     return documentMapper.toResponse(doc)
   }
 
   @Transactional
-  override fun delete(owner: String, id: Long) {
+  override fun delete(ownerId: Long, id: Long) {
     val doc = documentRepository.findById(id)
-      .orElseThrow { NoSuchElementException("Document $id not found") }
-    assertOwner(doc.owner, owner)
+      .orElseThrow { DocumentNotFoundException(id) }
+    assertOwner(doc.ownerId, ownerId)
     documentVersionRepository.deleteAll(
       documentVersionRepository.findAllByDocumentIdOrderByVersionNumberDesc(id)
     )
@@ -85,20 +93,20 @@ class DocumentServiceImpl(
   }
 
   @Transactional(readOnly = true)
-  override fun listVersions(owner: String, docId: Long): List<DocumentVersionSummary> {
+  override fun listVersions(ownerId: Long, docId: Long): List<DocumentVersionSummary> {
     val doc = documentRepository.findById(docId)
-      .orElseThrow { NoSuchElementException("Document $docId not found") }
-    assertOwner(doc.owner, owner)
+      .orElseThrow { DocumentNotFoundException(docId) }
+    assertOwner(doc.ownerId, ownerId)
     return documentVersionRepository
       .findAllByDocumentIdOrderByVersionNumberDesc(docId)
-      .map { documentMapper.toSummary(it) }
+      .map(documentMapper::toSummary)
   }
 
   @Transactional(readOnly = true)
-  override fun getVersion(owner: String, docId: Long, versionId: Long): DocumentResponse {
+  override fun getVersion(ownerId: Long, docId: Long, versionId: Long): DocumentResponse {
     val version = documentVersionRepository.findById(versionId)
-      .orElseThrow { NoSuchElementException("Version $versionId not found") }
-    assertOwner(version.document.owner, owner)
+      .orElseThrow { VersionNotFoundException(versionId) }
+    assertOwner(version.document.ownerId, ownerId)
     return DocumentResponse(
       id = version.document.id,
       title = version.document.title,
@@ -109,19 +117,19 @@ class DocumentServiceImpl(
   }
 
   @Transactional
-  override fun restoreVersion(owner: String, docId: Long, versionId: Long) {
+  override fun restoreVersion(ownerId: Long, docId: Long, versionId: Long) {
     val doc = documentRepository.findById(docId)
-      .orElseThrow { NoSuchElementException("Document $docId not found") }
+      .orElseThrow { DocumentNotFoundException(docId) }
     val version = documentVersionRepository.findById(versionId)
-      .orElseThrow { NoSuchElementException("Version $versionId not found") }
-    assertOwner(doc.owner, owner)
+      .orElseThrow { VersionNotFoundException(versionId) }
+    assertOwner(doc.ownerId, ownerId)
 
     val newVersionNo = (doc.currentVersion?.versionNumber ?: 0) + 1
     val restoredVersion = DocumentVersion(
       document = doc,
       versionNumber = newVersionNo,
       content = version.content,
-      author = owner,
+      authorId = ownerId,
       createdAt = Instant.now()
     )
     documentVersionRepository.save(restoredVersion)
@@ -131,7 +139,7 @@ class DocumentServiceImpl(
     documentRepository.save(doc)
   }
 
-  private fun assertOwner(actualOwner: String, currentUser: String) {
-    if (actualOwner != currentUser) throw IllegalAccessException("Not your document")
+  private fun assertOwner(actualOwnerId: Long, currentUserId: Long) {
+    if (actualOwnerId != currentUserId) throw NotDocumentOwnerException(actualOwnerId)
   }
 }

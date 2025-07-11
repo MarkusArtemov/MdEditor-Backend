@@ -20,8 +20,8 @@ data class DocumentVersion(
   @Column(nullable = false)
   val content: String,
 
-  @Column(nullable = false)
-  val author: String,
+  @Column(name = "author_id", nullable = false)
+  val authorId: Long,
 
   @Column(nullable = false)
   val createdAt: Instant = Instant.now()
