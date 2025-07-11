@@ -1,6 +1,6 @@
-package de.hsfl.mdeditorbackend.user.repository
+package de.hsfl.mdeditorbackend.auth.repository
 
-import de.hsfl.mdeditorbackend.user.model.entity.User
+import de.hsfl.mdeditorbackend.auth.model.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository : JpaRepository<User, Long> {

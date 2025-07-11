@@ -1,9 +1,10 @@
-package de.hsfl.mdeditorbackend.user.controller
+package de.hsfl.mdeditorbackend.auth.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.hsfl.mdeditorbackend.user.model.dto.ChangeRoleRequest
-import de.hsfl.mdeditorbackend.user.model.entity.Role
-import de.hsfl.mdeditorbackend.user.service.UserService
+import de.hsfl.mdeditorbackend.auth.controller.AdminUserController
+import de.hsfl.mdeditorbackend.auth.model.dto.ChangeRoleRequest
+import de.hsfl.mdeditorbackend.auth.model.entity.Role
+import de.hsfl.mdeditorbackend.auth.service.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

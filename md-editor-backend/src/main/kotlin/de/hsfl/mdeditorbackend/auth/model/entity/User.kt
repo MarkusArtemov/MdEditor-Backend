@@ -1,4 +1,4 @@
-package de.hsfl.mdeditorbackend.user.model.entity
+package de.hsfl.mdeditorbackend.auth.model.entity
 
 import jakarta.persistence.*
 

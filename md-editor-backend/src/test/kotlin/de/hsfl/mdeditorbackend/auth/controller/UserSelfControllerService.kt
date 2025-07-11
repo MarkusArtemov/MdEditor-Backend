@@ -1,9 +1,10 @@
-package de.hsfl.mdeditorbackend.user.controller
+package de.hsfl.mdeditorbackend.auth.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.hsfl.mdeditorbackend.user.model.dto.ChangeUsernameRequest
-import de.hsfl.mdeditorbackend.user.model.dto.ChangePasswordRequest
-import de.hsfl.mdeditorbackend.user.service.UserService
+import de.hsfl.mdeditorbackend.auth.controller.UserSelfController
+import de.hsfl.mdeditorbackend.auth.model.dto.ChangeUsernameRequest
+import de.hsfl.mdeditorbackend.auth.model.dto.ChangePasswordRequest
+import de.hsfl.mdeditorbackend.auth.service.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

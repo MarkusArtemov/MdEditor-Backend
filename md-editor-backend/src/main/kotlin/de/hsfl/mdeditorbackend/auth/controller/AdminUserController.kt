@@ -1,7 +1,7 @@
-package de.hsfl.mdeditorbackend.user.controller
+package de.hsfl.mdeditorbackend.auth.controller
 
-import de.hsfl.mdeditorbackend.user.model.dto.ChangeRoleRequest
-import de.hsfl.mdeditorbackend.user.service.UserService
+import de.hsfl.mdeditorbackend.auth.model.dto.ChangeRoleRequest
+import de.hsfl.mdeditorbackend.auth.service.UserService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
