@@ -9,6 +9,9 @@ class DocumentNotFoundException(id: Long) :
 class VersionNotFoundException(id: Long) :
   BusinessException(HttpStatus.NOT_FOUND, "Version $id not found")
 
+class MissingCurrentVersionException(id: Long) :
+  BusinessException(HttpStatus.CONFLICT, "Document $id has no current version")
+
 class NotDocumentOwnerException(docId: Long) :
   BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of document $docId")
 
