@@ -7,4 +7,5 @@ import java.util.*
 interface DocumentVersionRepository : JpaRepository<DocumentVersion, Long> {
   fun findAllByDocumentIdOrderByVersionNumberDesc(documentId: Long): List<DocumentVersion>
   fun findByDocumentIdAndVersionNumber(docId: Long, versionNumber: Long): Optional<DocumentVersion>
+  fun findByDocumentIdAndVersionNumberAndDocumentOwnerId(documentId: Long, versionId: Long, ownerId: Long): Optional<DocumentVersion>
 }
