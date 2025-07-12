@@ -11,5 +11,5 @@ interface DocumentService {
 
   fun listVersions(ownerId: Long, docId: Long): List<DocumentVersionSummary>
   fun getVersion(ownerId: Long, docId: Long, versionId: Long): DocumentResponse
-  fun restoreVersion(ownerId: Long, docId: Long, versionId: Long)
+  fun restoreVersion(ownerId: Long, docId: Long, versionId: Long) : DocumentResponse
 }

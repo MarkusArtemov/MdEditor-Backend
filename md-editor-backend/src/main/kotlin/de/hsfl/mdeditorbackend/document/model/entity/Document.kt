@@ -19,6 +19,13 @@ data class Document(
   @JoinColumn(name = "current_version_id")
   var currentVersion: DocumentVersion? = null,
 
+  @OneToMany(
+    mappedBy = "document",
+    cascade = [CascadeType.ALL],
+    orphanRemoval = true
+  )
+  val versions: MutableList<DocumentVersion> = mutableListOf(),
+
   @Column(nullable = false)
   val createdAt: Instant = Instant.now(),
 
