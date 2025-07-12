@@ -92,8 +92,8 @@ class UserServiceImpl(
         userRepository.save(user)
     }
 
-    override fun deleteOwnAccount(currentUsername: String) {
-        val user = findByUsername(currentUsername)
-        userRepository.delete(user)
+    @Transactional
+    override fun deleteOwnAccount(id: Long) {
+      deleteUser(id)
     }
 }

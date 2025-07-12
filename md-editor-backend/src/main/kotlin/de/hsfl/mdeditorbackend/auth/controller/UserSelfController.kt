@@ -39,7 +39,7 @@ class UserSelfController(
     fun deleteAccount(
         @AuthenticationPrincipal user: UserPrincipal
     ): ResponseEntity<Void> {
-        val me = user.username
+        val me = user.id
         userService.deleteOwnAccount(me)
         return ResponseEntity.noContent().build()
     }

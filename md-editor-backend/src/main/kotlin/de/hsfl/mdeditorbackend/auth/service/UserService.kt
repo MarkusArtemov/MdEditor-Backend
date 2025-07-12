@@ -16,5 +16,5 @@ interface UserService {
 
     fun updateOwnUsername(currentUsername: String, newUsername: String)
     fun updateOwnPassword(currentUsername: String, oldPassword: String, newPassword: String)
-    fun deleteOwnAccount(currentUsername: String)
+    fun deleteOwnAccount(id: Long)
 }
