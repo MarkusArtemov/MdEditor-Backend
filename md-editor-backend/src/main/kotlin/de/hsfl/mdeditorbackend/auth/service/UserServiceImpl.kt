@@ -4,13 +4,18 @@ import de.hsfl.mdeditorbackend.auth.model.dto.UserCreateDto
 import de.hsfl.mdeditorbackend.auth.model.entity.User
 import de.hsfl.mdeditorbackend.auth.model.entity.Role
 import de.hsfl.mdeditorbackend.auth.repository.UserRepository
+import de.hsfl.mdeditorbackend.common.event.UserDeleteRequested
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.transaction.annotation.Transactional
+
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val eventPublisher: ApplicationEventPublisher
 ) : UserService {
     override fun create(dto: UserCreateDto): User {
         if (userRepository.existsByUsername(dto.username)) {
@@ -60,10 +65,12 @@ class UserServiceImpl(
         userRepository.save(user)
     }
 
+    @Transactional
     override fun deleteUser(id: Long) {
         if (!userRepository.existsById(id)) {
             throw NoSuchElementException("User $id nicht gefunden")
         }
+        eventPublisher.publishEvent(UserDeleteRequested(id))
         userRepository.deleteById(id)
     }
 

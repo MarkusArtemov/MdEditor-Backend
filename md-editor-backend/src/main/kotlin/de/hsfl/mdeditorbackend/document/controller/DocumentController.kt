@@ -1,14 +1,16 @@
 package de.hsfl.mdeditorbackend.document.controller
 
-import de.hsfl.mdeditorbackend.common.security.UserPrincipal
+import de.hsfl.mdeditorbackend.common.security.CurrentUserId
 import de.hsfl.mdeditorbackend.document.model.dto.*
 import de.hsfl.mdeditorbackend.document.service.DocumentService
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Positive
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
+@Validated
 @RestController
 @RequestMapping("/documents")
 class DocumentController(
@@ -18,63 +20,59 @@ class DocumentController(
   @PostMapping
   fun create(
     @Valid @RequestBody body: DocumentCreateRequest,
-    @AuthenticationPrincipal user: UserPrincipal
+    @CurrentUserId userId: Long
   ): ResponseEntity<DocumentResponse> =
     ResponseEntity.status(HttpStatus.CREATED)
-      .body(documentService.create(user.id, body))
-
+      .body(documentService.create(userId, body))
 
   @GetMapping
-  fun listOwn(@AuthenticationPrincipal user: UserPrincipal): List<DocumentResponse> =
-    documentService.listOwn(user.id)
+  fun listOwn(@CurrentUserId userId: Long): List<DocumentResponse> =
+    documentService.listOwn(userId)
 
   @GetMapping("/{id}")
   fun get(
-    @PathVariable id: Long,
-    @AuthenticationPrincipal user: UserPrincipal
+    @PathVariable @Positive id: Long,
+    @CurrentUserId userId: Long
   ): DocumentResponse =
-    documentService.get(user.id, id)
-
+    documentService.get(userId, id)
 
   @PutMapping("/{id}")
   fun update(
-    @PathVariable id: Long,
+    @PathVariable @Positive id: Long,
     @Valid @RequestBody body: DocumentUpdateRequest,
-    @AuthenticationPrincipal user: UserPrincipal
+    @CurrentUserId userId: Long
   ): DocumentResponse =
-    documentService.update(user.id, id, body)
+    documentService.update(userId, id, body)
 
   @DeleteMapping("/{id}")
   fun delete(
-    @PathVariable id: Long,
-    @AuthenticationPrincipal user: UserPrincipal
+    @PathVariable @Positive id: Long,
+    @CurrentUserId userId: Long
   ): ResponseEntity<Void> {
-    documentService.delete(user.id, id)
+    documentService.delete(userId, id)
     return ResponseEntity.noContent().build()
   }
 
   @GetMapping("/{id}/versions")
   fun versions(
-    @PathVariable id: Long,
-    @AuthenticationPrincipal user: UserPrincipal
+    @PathVariable @Positive id: Long,
+    @CurrentUserId userId: Long
   ): List<DocumentVersionSummary> =
-    documentService.listVersions(user.id, id)
+    documentService.listVersions(userId, id)
 
   @GetMapping("/{id}/versions/{vid}")
   fun getVersion(
-    @PathVariable id: Long,
-    @PathVariable vid: Long,
-    @AuthenticationPrincipal user: UserPrincipal
+    @PathVariable @Positive id: Long,
+    @PathVariable @Positive vid: Long,
+    @CurrentUserId userId: Long
   ): DocumentResponse =
-    documentService.getVersion(user.id, id, vid)
+    documentService.getVersion(userId, id, vid)
 
   @PostMapping("/{id}/restore/{vid}")
   fun restore(
-    @PathVariable id: Long,
-    @PathVariable vid: Long,
-    @AuthenticationPrincipal user: UserPrincipal
-  ): ResponseEntity<Void> {
-    documentService.restoreVersion(user.id, id, vid)
-    return ResponseEntity.noContent().build()
-  }
+    @PathVariable @Positive id: Long,
+    @PathVariable @Positive vid: Long,
+    @CurrentUserId userId: Long
+  ): DocumentResponse =
+    documentService.restoreVersion(userId, id, vid)
 }

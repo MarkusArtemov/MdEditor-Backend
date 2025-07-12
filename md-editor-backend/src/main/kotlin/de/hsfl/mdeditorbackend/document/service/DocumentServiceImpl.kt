@@ -18,25 +18,26 @@ class DocumentServiceImpl(
   private val documentMapper: DocumentMapper
 ) : DocumentService {
 
+
   override fun create(ownerId: Long, req: DocumentCreateRequest): DocumentResponse {
     if (req.content.isBlank()) throw EmptyContentException()
-    val document = documentMapper.toEntity(req, ownerId)
-    documentRepository.save(document)
+
+    val doc = documentMapper.toEntity(req, ownerId)
 
     val version = DocumentVersion(
-      document = document,
+      document = doc,
       versionNumber = 1,
       content = req.content,
       authorId = ownerId,
       createdAt = Instant.now()
     )
-    documentVersionRepository.save(version)
 
-    document.currentVersion = version
-    document.updatedAt = version.createdAt
-    documentRepository.save(document)
+    doc.versions.add(version)
+    doc.currentVersion = version
+    doc.updatedAt = version.createdAt
 
-    return documentMapper.toResponse(document)
+    documentRepository.save(doc)
+    return documentMapper.toResponse(doc)
   }
 
   @Transactional(readOnly = true)
@@ -63,15 +64,14 @@ class DocumentServiceImpl(
 
     req.content?.let {
       if (it.isBlank()) throw EmptyContentException()
-      val newVersionNo = (doc.currentVersion?.versionNumber ?: 0) + 1
       val version = DocumentVersion(
         document = doc,
-        versionNumber = newVersionNo,
+        versionNumber = (doc.currentVersion?.versionNumber ?: 0) + 1,
         content = it,
         authorId = ownerId,
         createdAt = Instant.now()
       )
-      documentVersionRepository.save(version)
+      doc.versions.add(version)
       doc.currentVersion = version
       doc.updatedAt = version.createdAt
     }
@@ -83,10 +83,8 @@ class DocumentServiceImpl(
   override fun delete(ownerId: Long, id: Long) {
     val doc = documentRepository.findById(id)
       .orElseThrow { DocumentNotFoundException(id) }
+
     assertOwner(doc.ownerId, ownerId)
-    documentVersionRepository.deleteAll(
-      documentVersionRepository.findAllByDocumentIdOrderByVersionNumberDesc(id)
-    )
     documentRepository.delete(doc)
   }
 
@@ -97,7 +95,7 @@ class DocumentServiceImpl(
     assertOwner(doc.ownerId, ownerId)
     return documentVersionRepository
       .findAllByDocumentIdOrderByVersionNumberDesc(docId)
-      .map(documentMapper::toSummary)
+      .map { document -> documentMapper.toSummary(document) }
   }
 
   @Transactional(readOnly = true)
@@ -114,13 +112,14 @@ class DocumentServiceImpl(
     )
   }
 
-  override fun restoreVersion(ownerId: Long, docId: Long, versionId: Long) {
-    val version = documentVersionRepository.findByDocumentIdAndVersionNumber(docId,versionId)
+  override fun restoreVersion(ownerId: Long, docId: Long, versionId: Long): DocumentResponse {
+    val version = documentVersionRepository
+      .findByDocumentIdAndVersionNumber(docId, versionId)
       .orElseThrow { VersionNotFoundException(versionId) }
+
     assertOwner(version.document.ownerId, ownerId)
 
     val document = version.document
-
     val newVersionNo = (document.currentVersion?.versionNumber ?: 0) + 1
     val restoredVersion = DocumentVersion(
       document = document,
@@ -129,12 +128,15 @@ class DocumentServiceImpl(
       authorId = ownerId,
       createdAt = Instant.now()
     )
-    documentVersionRepository.save(restoredVersion)
 
     document.currentVersion = restoredVersion
+    document.versions.add(restoredVersion)
     document.updatedAt = restoredVersion.createdAt
+
     documentRepository.save(document)
+    return documentMapper.toResponse(document)
   }
+
 
   private fun assertOwner(actualOwnerId: Long, currentUserId: Long) {
     if (actualOwnerId != currentUserId) throw NotDocumentOwnerException(actualOwnerId)
