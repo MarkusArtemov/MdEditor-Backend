@@ -92,8 +92,12 @@ class UserServiceImpl(
         userRepository.save(user)
     }
 
-    @Transactional
-    override fun deleteOwnAccount(id: Long) {
-      deleteUser(id)
-    }
+  @Transactional
+  override fun deleteOwnAccount(currentUsername: String) {
+    val user = userRepository.findByUsername(currentUsername)
+      ?: throw NoSuchElementException("User $currentUsername nicht gefunden")
+
+    eventPublisher.publishEvent(UserDeleteRequested(user.id))
+    userRepository.deleteById(user.id)
+  }
 }

@@ -12,6 +12,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.Mockito.*
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
@@ -23,6 +24,9 @@ class UserServiceImplTest {
 
     @Mock
     private lateinit var passwordEncoder: PasswordEncoder
+
+    @Mock
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @InjectMocks
     private lateinit var userService: UserServiceImpl
