@@ -1,6 +1,6 @@
 package de.hsfl.mdeditorbackend.auth.service
 
-import de.hsfl.mdeditorbackend.common.security.UserPrincipal
+import de.hsfl.mdeditorbackend.common.api.UserPrincipal
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

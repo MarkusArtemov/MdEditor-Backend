@@ -1,11 +1,11 @@
-package de.hsfl.mdeditorbackend.document
+package de.hsfl.mdeditorbackend.render
 
 import org.springframework.modulith.ApplicationModule
 import org.springframework.modulith.PackageInfo
 
 @ApplicationModule(
-  id = "document",
-  displayName = "Document Module",
+  id = "render",
+  displayName = "Render Module",
   allowedDependencies = ["common::api"]
 )
 @PackageInfo

@@ -1,4 +1,4 @@
-package de.hsfl.mdeditorbackend.common.security
+package de.hsfl.mdeditorbackend.common.api
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.annotation.AuthenticationPrincipal
