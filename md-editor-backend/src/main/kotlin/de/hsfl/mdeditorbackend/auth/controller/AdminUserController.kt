@@ -2,6 +2,7 @@ package de.hsfl.mdeditorbackend.auth.controller
 
 import de.hsfl.mdeditorbackend.auth.model.dto.ChangeRoleRequest
 import de.hsfl.mdeditorbackend.auth.service.UserService
+import de.hsfl.mdeditorbackend.common.api.ApiError
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,7 +20,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
     ApiResponse(
       responseCode = "404",
       description = "User not found",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     )
   ]
 )

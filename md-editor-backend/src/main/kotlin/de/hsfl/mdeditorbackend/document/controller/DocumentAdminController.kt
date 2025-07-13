@@ -1,5 +1,6 @@
 package de.hsfl.mdeditorbackend.document.controller
 
+import de.hsfl.mdeditorbackend.common.api.ApiError
 import de.hsfl.mdeditorbackend.document.model.dto.DocumentResponse
 import de.hsfl.mdeditorbackend.document.model.dto.DocumentVersionSummary
 import de.hsfl.mdeditorbackend.document.service.DocumentAdminService
@@ -28,7 +29,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
     ApiResponse(
       responseCode = "404",
       description = "Document not found",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     )
   ]
 )

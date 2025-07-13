@@ -1,5 +1,6 @@
 package de.hsfl.mdeditorbackend.document.controller
 
+import de.hsfl.mdeditorbackend.common.api.ApiError
 import de.hsfl.mdeditorbackend.common.api.CurrentUserId
 import de.hsfl.mdeditorbackend.document.model.dto.*
 import de.hsfl.mdeditorbackend.document.service.DocumentService
@@ -26,17 +27,26 @@ import io.swagger.v3.oas.annotations.tags.Tag
     ApiResponse(
       responseCode = "400",
       description = "Validation failed",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     ),
     ApiResponse(
       responseCode = "404",
       description = "Document not found or its not owned by caller",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     ),
     ApiResponse(
       responseCode = "409",
       description = "Document has no current version",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     )
   ]
 )

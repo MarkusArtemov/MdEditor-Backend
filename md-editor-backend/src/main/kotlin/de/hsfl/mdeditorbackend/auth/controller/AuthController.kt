@@ -6,6 +6,7 @@ import de.hsfl.mdeditorbackend.auth.model.dto.LoginRequest
 import de.hsfl.mdeditorbackend.auth.model.dto.UserCreateDto
 import de.hsfl.mdeditorbackend.auth.model.entity.Role
 import de.hsfl.mdeditorbackend.auth.service.UserService
+import de.hsfl.mdeditorbackend.common.api.ApiError
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -25,7 +26,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
     ApiResponse(
       responseCode = "400",
       description = "Bad request",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     )
   ]
 )

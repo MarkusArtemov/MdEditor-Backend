@@ -1,5 +1,6 @@
 package de.hsfl.mdeditorbackend.render.controller
 
+import de.hsfl.mdeditorbackend.common.api.ApiError
 import de.hsfl.mdeditorbackend.render.service.MarkdownRenderer
 import de.hsfl.mdeditorbackend.render.util.ExportUtil
 import jakarta.validation.constraints.Positive
@@ -22,7 +23,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
     ApiResponse(
       responseCode = "404",
       description = "Not found",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     )
   ]
 )

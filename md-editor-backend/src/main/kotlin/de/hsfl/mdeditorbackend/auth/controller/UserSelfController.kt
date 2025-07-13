@@ -4,6 +4,7 @@ import de.hsfl.mdeditorbackend.common.api.UserPrincipal
 import de.hsfl.mdeditorbackend.auth.model.dto.ChangePasswordRequest
 import de.hsfl.mdeditorbackend.auth.model.dto.ChangeUsernameRequest
 import de.hsfl.mdeditorbackend.auth.service.UserService
+import de.hsfl.mdeditorbackend.common.api.ApiError
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -22,17 +23,26 @@ import io.swagger.v3.oas.annotations.tags.Tag
     ApiResponse(
       responseCode = "400",
       description = "Bad request - wrong old password",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     ),
     ApiResponse(
       responseCode = "404",
       description = "User not found",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     ),
     ApiResponse(
       responseCode = "409",
       description = "Conflict - Username already taken",
-      content = [Content(schema = Schema(ref = "#/components/schemas/ApiError"))]
+      content = [ Content(
+        mediaType = "application/json",
+        schema = Schema(implementation = ApiError::class)
+      ) ]
     )
   ]
 )
