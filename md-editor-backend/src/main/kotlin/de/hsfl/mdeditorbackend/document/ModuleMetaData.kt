@@ -5,7 +5,8 @@ import org.springframework.modulith.PackageInfo
 
 @ApplicationModule(
   id = "document",
-  displayName = "Document Module"
+  displayName = "Document Module",
+  allowedDependencies = ["common::api"]
 )
 @PackageInfo
 class ModuleMetaData()

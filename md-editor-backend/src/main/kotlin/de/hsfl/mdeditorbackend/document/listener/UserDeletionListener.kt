@@ -1,6 +1,6 @@
 package de.hsfl.mdeditorbackend.document.listener
 
-import de.hsfl.mdeditorbackend.common.event.UserDeleteRequested
+import de.hsfl.mdeditorbackend.common.api.UserDeleteRequested
 import de.hsfl.mdeditorbackend.document.repository.DocumentRepository
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component

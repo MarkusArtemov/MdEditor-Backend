@@ -1,8 +1,10 @@
-package de.hsfl.mdeditorbackend.common.markdown
+package de.hsfl.mdeditorbackend.common.api
+
 
 interface MarkdownProvider {
-  fun findContent(ownerId: Long, docId: Long, versionId: Long?): MarkdownInfo
+  fun findContent(ownerId: Long?, docId: Long, versionId: Long?): MarkdownInfo
 }
+
 data class MarkdownInfo(
   val documentId: Long,
   val title: String,

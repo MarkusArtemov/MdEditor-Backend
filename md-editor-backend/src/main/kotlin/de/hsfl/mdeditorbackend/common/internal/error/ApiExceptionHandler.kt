@@ -1,5 +1,7 @@
-package de.hsfl.mdeditorbackend.common.error
+package de.hsfl.mdeditorbackend.common.internal.error
 
+import de.hsfl.mdeditorbackend.common.api.ApiError
+import de.hsfl.mdeditorbackend.common.api.BusinessException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -18,8 +20,8 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
   @ExceptionHandler(BusinessException::class)
   fun handleBusiness(be: BusinessException): ResponseEntity<ApiError> {
-    log.warn("BusinessException: {}", be.message)
-    return error(be.status, be.message)
+    log.warn(be.logMessage)
+    return error(be.status, be.clientMessage, be.errorCode)
   }
 
   override fun handleExceptionInternal(
@@ -30,9 +32,20 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
     request: WebRequest
   ): ResponseEntity<Any> {
     log.debug("Spring error: {}", ex.message)
+
     val httpStatus = HttpStatus.valueOf(statusCode.value())
-    return error(httpStatus, ex.message) as ResponseEntity<Any>
+
+    val apiError = ApiError(
+      status = httpStatus.value(),
+      error = httpStatus.reasonPhrase,
+      message = ex.message
+    )
+    return ResponseEntity
+      .status(httpStatus)
+      .headers(headers)
+      .body(apiError)
   }
+
 
   @ExceptionHandler(Exception::class)
   fun handleUnexpected(ex: Exception): ResponseEntity<ApiError> {
@@ -40,6 +53,6 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
     return error(INTERNAL_SERVER_ERROR, "Unexpected error")
   }
 
-  private fun error(status: HttpStatus, msg: String?) =
-    ResponseEntity.status(status).body(ApiError(status.value(), status.reasonPhrase, msg))
+  private fun error(status: HttpStatus, msg: String?, code: String? = null) =
+    ResponseEntity.status(status).body(ApiError(status.value(), status.reasonPhrase, msg, code))
 }
