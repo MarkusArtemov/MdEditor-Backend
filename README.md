@@ -24,8 +24,8 @@ Nur `common.api` ist öffentlich, Rest bleibt intern
 Java 21 oder höher, sollte lokal installiert sein
 
 ```bash
-git clone https://gitlab.hs-flensburg.de/maar2838/softwarearchitektur-hausarbeit-sose25.git
-cd softwarearchitektur-hausarbeit-sose25/md-editor-backend
+git clone https://github.com/MarkusArtemov/MdEditor-Backend.git
+cd MdEditor-Backen/md-editor-backend
 ./gradlew bootRun
 ```
 
