@@ -25,7 +25,7 @@ Java 21 oder höher, sollte lokal installiert sein
 
 ```bash
 git clone https://github.com/MarkusArtemov/MdEditor-Backend.git
-cd MdEditor-Backen/md-editor-backend
+cd MdEditor-Backend/md-editor-backend
 ./gradlew bootRun
 ```
 
